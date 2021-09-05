@@ -1,0 +1,35 @@
+name: Test
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  test-on-lts:
+    runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        lisp_impl: [sbcl_ros]
+    steps:
+      - name: Check Out Everything
+        uses: actions/checkout@v2
+      - name: Install Lisp
+        uses: borodust/lisp@v0
+        with:
+          lisp: ${{ matrix.lisp_impl }}
+      - name: Test Lisp
+        run: $LISP --eval "(require 'uiop)" --eval '(print (uiop:implementation-identifier))' --eval '(uiop:quit)'
+  test-on-latest:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        lisp_impl: [sbcl, sbcl_ros]
+    steps:
+      - name: Check Out Everything
+        uses: actions/checkout@v2
+      - name: Install Lisp
+        uses: borodust/lisp@v0
+        with:
+          lisp: ${{ matrix.lisp_impl }}
+      - name: Test Lisp
+        run: $LISP --eval "(require 'uiop)" --eval '(print (uiop:implementation-identifier))' --eval '(uiop:quit)'

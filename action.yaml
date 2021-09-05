@@ -1,0 +1,34 @@
+name: 'Install Common Lisp Implementation'
+description: 'Installs Common Lisp implementation and exposes it as LISP environment variable'
+inputs:
+  lisp:
+    description: |
+      Implementation to install:
+        * sbcl - official package provided by SBCL developers
+        * sbcl_ros - SBCL package provided by roswell maintainers
+    required: true
+    default: 'sbcl'
+  version:
+    description: 'Version of lisp implementation to install'
+outputs:
+  lisp:
+    description: "Link to Common Lisp implementation executable"
+    value: ${{ steps.output.lisp }}
+  lisp_install_prefix:
+    description: "Link to Common Lisp implementation executable"
+    value: ${{ steps.output.install_prefix.lisp_install_prefix }}
+runs:
+  using: "composite"
+  steps:
+    - run: echo "LISP=$HOME/.local/bin/lisp" >> $GITHUB_ENV
+      shell: sh
+    - run: echo "LISP_INSTALL_PREFIX=$HOME/.local/opt/lisp/" >> $GITHUB_ENV
+      shell: sh
+    - run: ${{ github.action_path }}/install-lisp.sh "$LISP" ${{ inputs.lisp }} "$LISP_INSTALL_PREFIX" ${{ inputs.version }}
+      shell: sh
+    - id: output
+      run: echo "::set-output name=lisp::$LISP"
+      shell: sh
+    - id: install_prefix
+      run: echo "::set-output name=lisp_install_prefix::$LISP_INSTALL_PREFIX"
+      shell: sh
