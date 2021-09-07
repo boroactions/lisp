@@ -14,7 +14,7 @@ jobs:
       - name: Check Out Everything
         uses: actions/checkout@v2
       - name: Install Lisp
-        uses: borodust/lisp@v0
+        uses: boroactions/lisp@v0
         with:
           lisp: ${{ matrix.lisp_impl }}
       - name: Test Lisp
@@ -28,7 +28,7 @@ jobs:
       - name: Check Out Everything
         uses: actions/checkout@v2
       - name: Install Lisp
-        uses: borodust/lisp@v0
+        uses: boroactions/lisp@v0
         with:
           lisp: ${{ matrix.lisp_impl }}
       - name: Test Lisp
