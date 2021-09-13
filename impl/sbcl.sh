@@ -1,4 +1,4 @@
-export _SBCL_GLIBC_POSTFIX=-glibc2.10
+export _SBCL_GLIBC_POSTFIX="-glibc2.10"
 export _SBCL_VERSION=${LISP_VERSION:-2.1.8}
 
 _install_sbcl() {
@@ -9,6 +9,8 @@ _install_sbcl() {
     SBCL_ARCHIVE_NAME=$SBCL_NAME-binary.tar.bz2
     SBCL_ARCHIVE_FILE=/tmp/$SBCL_ARCHIVE_NAME
     SBCL_BIN=$LISP_INSTALL_PREFIX/bin/sbcl
+
+    rm -f $LISP_BIN && ln -s $SBCL_BIN $LISP_BIN
 
     if lisp_id_exists "$SBCL_NAME"; then
         echo "$SBCL_NAME already installed. Skipping."
@@ -25,8 +27,6 @@ _install_sbcl() {
     cd /tmp/ && tar -xf $SBCL_ARCHIVE_FILE
 
     cd /tmp/$SBCL_NAME/ && ./install.sh --prefix=$LISP_INSTALL_PREFIX
-
-    ln -s $SBCL_BIN $LISP_BIN
 }
 
 install_sbcl () {
