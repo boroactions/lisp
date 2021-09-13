@@ -10,13 +10,15 @@ inputs:
     default: 'sbcl'
   version:
     description: 'Version of lisp implementation to install'
+  install-prefix:
+    description: |
+      Path to install lisp implementation into.
+    required: true
+    default: "${{ github.workspace }}/.boroactions/lisp/v0/lisp/"
 outputs:
   lisp:
     description: "Link to Common Lisp implementation executable"
     value: ${{ steps.output.lisp }}
-  lisp_install_prefix:
-    description: "Link to Common Lisp implementation executable"
-    value: ${{ steps.output.install_prefix.lisp_install_prefix }}
 runs:
   using: "composite"
   steps:
@@ -28,7 +30,4 @@ runs:
       shell: sh
     - id: output
       run: echo "::set-output name=lisp::$LISP"
-      shell: sh
-    - id: install_prefix
-      run: echo "::set-output name=lisp_install_prefix::$LISP_INSTALL_PREFIX"
       shell: sh
