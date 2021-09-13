@@ -2,11 +2,53 @@
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
-LISP_BIN=${1:=$HOME/.local/bin/lisp}
-LISP_IMPLEMENTATION=${2:=sbcl}
-LISP_INSTALL_PREFIX=${3:=$HOME/.local/opt/lisp/}
-LISP_VERSION=$4
-LISP_ID_FILE=$HOME/.local/share/lisp/lisp_identifier.txt
+SCRIPT_ACTION=$1
+shift
+
+while [[ $# -gt 0 ]]; do
+  key="$1"
+
+  case $key in
+      --lisp)
+          LISP_IMPLEMENTATION=$2
+          shift
+          shift
+          ;;
+      --lisp-version)
+          export LISP_VERSION=$2
+          shift
+          shift
+          ;;
+      --bin)
+          LISP_BIN=$2
+          shift
+          shift
+          ;;
+      --install-prefix)
+          LISP_INSTALL_PREFIX=$2
+          shift
+          shift
+          ;;
+      --id-file)
+          LISP_ID_FILE=$2
+          shift
+          shift
+          ;;
+      --*)
+          shift
+          shift
+          ;;
+      *)
+          shift # past argument
+          ;;
+  esac
+done
+
+export LISP_IMPLEMENTATION=${LISP_IMPLEMENTATION:-sbcl}
+export LISP_BIN=${LISP_BIN:-$HOME/.local/bin/lisp}
+export LISP_INSTALL_PREFIX=${LISP_INSTALL_PREFIX:-$HOME/.local/opt/lisp/}
+export LISP_ID_FILE=${LISP_ID_FILE:-$LISP_INSTALL_PREFIX/.lispid}
+
 
 mkdir -p $(dirname $LISP_BIN)
 
@@ -36,4 +78,18 @@ function write_lisp_id() {
 
 . $SCRIPT_DIR/impl/sbcl.sh
 
-install_$LISP_IMPLEMENTATION
+
+case $SCRIPT_ACTION in
+
+  install)
+      install_$LISP_IMPLEMENTATION
+    ;;
+
+  id)
+      print_lisp_id_$LISP_IMPLEMENTATION
+    ;;
+
+  *)
+      exit -1
+    ;;
+esac

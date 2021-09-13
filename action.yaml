@@ -24,9 +24,20 @@ runs:
   steps:
     - run: echo "LISP=$HOME/.local/bin/lisp" >> $GITHUB_ENV
       shell: sh
-    - run: echo "LISP_INSTALL_PREFIX=$HOME/.local/opt/lisp/" >> $GITHUB_ENV
+    - run: echo "LISP_INSTALL_PREFIX=${{ inputs.install-prefix }}/" >> $GITHUB_ENV
       shell: sh
-    - run: ${{ github.action_path }}/install-lisp.sh "$LISP" ${{ inputs.lisp }} "$LISP_INSTALL_PREFIX" ${{ inputs.version }}
+    - id: lisp-id
+      run: echo "::set-output name=value::$(${{ github.action_path }}/install-lisp.sh id --lisp ${{ inputs.lisp }} --version '${{ inputs.version }}')"
+      shell: sh
+    - run:
+      shell: sh
+    - id: cache
+      uses: actions/cache@v2
+      with:
+        path: |
+          ${{ env.LISP_INSTALL_PREFIX }}
+        key: ${{ runner.os }}-${{ steps.lisp-id.outputs.value }}
+    - run: ${{ github.action_path }}/install-lisp.sh install --lisp '${{ inputs.lisp }}' --version '${{ inputs.version }}' --bin "$LISP" --install-prefix "$LISP_INSTALL_PREFIX"
       shell: sh
     - id: output
       run: echo "::set-output name=lisp::$LISP"
